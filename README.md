@@ -65,13 +65,13 @@ cd todo-list-python
 3. Run the app:
 
 ```bash
-python todo_app.py
+python To-do list.py
 ```
 
 Or:
 
 ```bash
-py todo_app.py
+py To-do list.py
 ```
 
 ## Example Usage
