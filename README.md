@@ -53,7 +53,7 @@ Note: `tasks.db` and `exports/` are generated automatically when the program run
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/SteffaniSilva/todo-list-python.git
+git clone https://github.com/SteffaniSilva/To-do-list.git
 ```
 
 2. Go to the project folder:
