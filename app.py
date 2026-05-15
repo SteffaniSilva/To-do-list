@@ -1,32 +1,46 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
+import os
 
 app = Flask(__name__)
 
 # DATABASE CONNECTION
 
+DATABASE = 'tasks.db'
+
+
 def get_db_connection():
-    conn = sqlite3.connect('tasks.db')
+
+    conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
+
     return conn
+
 
 # CREATE TABLE
 
-conn = get_db_connection()
+def create_table():
 
-conn.execute('''
-CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    due_date TEXT,
-    priority TEXT,
-    due_time TEXT,
-    status TEXT DEFAULT 'Pending'
-)
-''')
+    conn = get_db_connection()
 
-conn.commit()
-conn.close()
+    conn.execute('''
+    CREATE TABLE IF NOT EXISTS tasks (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        due_date TEXT,
+        priority TEXT,
+        due_time TEXT,
+        status TEXT DEFAULT 'Pending'
+
+    )
+    ''')
+
+    conn.commit()
+    conn.close()
+
+
+create_table()
 
 # HOME PAGE
 
@@ -66,7 +80,13 @@ def add_task():
             (title, due_date, priority, due_time, status)
             VALUES (?, ?, ?, ?, ?)
             ''',
-            (title, due_date, priority, due_time, 'Pending')
+            (
+                title,
+                due_date,
+                priority,
+                due_time,
+                'Pending'
+            )
         )
 
         conn.commit()
@@ -89,7 +109,10 @@ def complete_task(id):
         SET status = ?
         WHERE id = ?
         ''',
-        ('Completed', id)
+        (
+            'Completed',
+            id
+        )
     )
 
     conn.commit()
@@ -142,7 +165,13 @@ def edit_task(id):
                 due_time = ?
             WHERE id = ?
             ''',
-            (title, due_date, priority, due_time, id)
+            (
+                title,
+                due_date,
+                priority,
+                due_time,
+                id
+            )
         )
 
         conn.commit()
@@ -157,7 +186,18 @@ def edit_task(id):
         task=task
     )
 
+# VERCEL DEPLOYMENT FIX
+
+app = app
+
 # RUN APP
 
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    port = int(os.environ.get("PORT", 5000))
+
+    app.run(
+        host='0.0.0.0',
+        port=port,
+        debug=True
+    )
